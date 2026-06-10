@@ -3,63 +3,130 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ShopAlpha — Store</title>
+  <title>TaskFlow</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <nav class="navbar">
-  <div class="logo">Shop<span>Alpha</span></div>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="cart.html">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
-    <span id="userGreeting" style="color:#888899;font-size:0.9rem;"></span>
-    <a href="auth.html" id="authLink">Login</a>
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="page">
+    <div class="card">
+      <h2>🗂 TaskFlow</h2>
+      <input id="loginEmail" type="email" placeholder="Email" />
+      <input id="loginPassword" type="password" placeholder="Password" />
+      <p id="loginError" class="error"></p>
+      <button onclick="login()">Login</button>
+      <p class="small">Demo: alice@email.com / 1234</p>
+    </div>
   </div>
-</nav>
 
-  <section class="hero">
-    <h1>Discover Products<br/>You'll <span>Love</span></h1>
-    <p>Premium quality. Unbeatable prices.</p>
-    <a href="#products" class="btn">Shop Now</a>
-  </section>
+  <!-- PROJECTS PAGE -->
+  <div id="projectsPage" class="page hidden">
+    <nav>
+      <span>🗂 TaskFlow</span>
+      <div>
+        <button onclick="toggleNotifs()">🔔 <span id="notifCount"></span></button>
+        <span id="navUser"></span>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </nav>
+    <div id="notifBox" class="notif-box hidden"></div>
+    <div class="container">
+      <div class="row">
+        <h2>My Projects</h2>
+        <button onclick="showProjectForm()">+ New Project</button>
+      </div>
+      <div id="newProjectForm" class="hidden">
+        <input id="newProjectName" placeholder="Project name" />
+        <button onclick="createProject()">Create</button>
+        <button onclick="hideProjectForm()">Cancel</button>
+      </div>
+      <div id="projectList"></div>
+    </div>
+  </div>
 
-  <section class="controls" id="products">
-    <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()" />
-    <select id="categoryFilter" onchange="filterProducts()">
-      <option value="all">All Categories</option>
-      <option value="electronics">Electronics</option>
-      <option value="clothing">Clothing</option>
-      <option value="accessories">Accessories</option>
-    </select>
-  </section>
+  <!-- BOARD PAGE -->
+  <div id="boardPage" class="page hidden">
+    <nav>
+      <span onclick="goToProjects()" style="cursor:pointer">🗂 TaskFlow</span>
+      <div>
+        <span id="boardProjectName"></span>
+        <button onclick="toggleNotifs()">🔔 <span id="notifCount2"></span></button>
+        <span id="navUser2"></span>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </nav>
+    <div id="notifBox2" class="notif-box hidden"></div>
+    <div class="container">
+      <div class="row" style="margin-bottom:12px">
+        <span id="membersList" class="tag"></span>
+        <button onclick="toggleInvite()">+ Invite</button>
+      </div>
+      <div id="inviteForm" class="hidden row">
+        <input id="inviteEmail" placeholder="User email" />
+        <button onclick="inviteMember()">Add</button>
+        <span id="inviteMsg"></span>
+      </div>
+      <div class="board">
+        <div class="column">
+          <div class="col-header">📋 TODO <span id="count-todo"></span></div>
+          <div id="tasks-todo" class="task-list"></div>
+          <button onclick="showAddTask('todo')">+ Add Task</button>
+          <div id="form-todo" class="hidden add-task-form">
+            <input id="title-todo" placeholder="Task title" />
+            <select id="assign-todo"></select>
+            <button onclick="addTask('todo')">Add</button>
+            <button onclick="hideAddTask('todo')">Cancel</button>
+          </div>
+        </div>
+        <div class="column">
+          <div class="col-header">🔄 IN PROGRESS <span id="count-in-progress"></span></div>
+          <div id="tasks-in-progress" class="task-list"></div>
+          <button onclick="showAddTask('in-progress')">+ Add Task</button>
+          <div id="form-in-progress" class="hidden add-task-form">
+            <input id="title-in-progress" placeholder="Task title" />
+            <select id="assign-in-progress"></select>
+            <button onclick="addTask('in-progress')">Add</button>
+            <button onclick="hideAddTask('in-progress')">Cancel</button>
+          </div>
+        </div>
+        <div class="column">
+          <div class="col-header">✅ DONE <span id="count-done"></span></div>
+          <div id="tasks-done" class="task-list"></div>
+          <button onclick="showAddTask('done')">+ Add Task</button>
+          <div id="form-done" class="hidden add-task-form">
+            <input id="title-done" placeholder="Task title" />
+            <select id="assign-done"></select>
+            <button onclick="addTask('done')">Add</button>
+            <button onclick="hideAddTask('done')">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <section class="product-grid" id="productGrid"></section>
+  <!-- TASK MODAL -->
+  <div id="taskModal" class="overlay hidden" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="row">
+        <h3 id="modalTitle"></h3>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <p><strong>Assigned to:</strong> <span id="modalAssignee"></span></p>
+      <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+      <div>
+        <strong>Move to:</strong>
+        <div id="moveButtons" class="row" style="margin-top:6px"></div>
+      </div>
+      <hr/>
+      <h4>💬 Comments</h4>
+      <div id="commentList"></div>
+      <textarea id="commentText" placeholder="Write a comment..."></textarea>
+      <button onclick="postComment()">Post Comment</button>
+    </div>
+  </div>
 
-  <div class="toast" id="toast">Item added to cart!</div>
-
-  <footer><p>© 2024 ShopAlpha — CodeAlpha Internship Project</p></footer>
-
-  <script src="products.js"></script>
-  <script src="script.js"></script>
-  <script>renderProducts(products);</script>
-  <script src="products.js"></script>
-  <script src="script.js"></script>
-  <script>renderProducts(products);</script>
-  
-  <script>
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (loggedInUser) {
-      document.getElementById("userGreeting").textContent = "Hi, " + loggedInUser.name + "!";
-      document.getElementById("authLink").textContent = "Logout";
-      document.getElementById("authLink").href = "#";
-      document.getElementById("authLink").onclick = () => {
-        localStorage.removeItem("loggedInUser");
-        window.location.reload();
-      };
-    }
-  </script>
-</body>
-</html>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
