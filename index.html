@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopAlpha — Store</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+  <div class="logo">Shop<span>Alpha</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cart.html">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
+    <span id="userGreeting" style="color:#888899;font-size:0.9rem;"></span>
+    <a href="auth.html" id="authLink">Login</a>
+  </div>
+</nav>
+
+  <section class="hero">
+    <h1>Discover Products<br/>You'll <span>Love</span></h1>
+    <p>Premium quality. Unbeatable prices.</p>
+    <a href="#products" class="btn">Shop Now</a>
+  </section>
+
+  <section class="controls" id="products">
+    <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()" />
+    <select id="categoryFilter" onchange="filterProducts()">
+      <option value="all">All Categories</option>
+      <option value="electronics">Electronics</option>
+      <option value="clothing">Clothing</option>
+      <option value="accessories">Accessories</option>
+    </select>
+  </section>
+
+  <section class="product-grid" id="productGrid"></section>
+
+  <div class="toast" id="toast">Item added to cart!</div>
+
+  <footer><p>© 2024 ShopAlpha — CodeAlpha Internship Project</p></footer>
+
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>renderProducts(products);</script>
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>renderProducts(products);</script>
+  
+  <script>
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedInUser) {
+      document.getElementById("userGreeting").textContent = "Hi, " + loggedInUser.name + "!";
+      document.getElementById("authLink").textContent = "Logout";
+      document.getElementById("authLink").href = "#";
+      document.getElementById("authLink").onclick = () => {
+        localStorage.removeItem("loggedInUser");
+        window.location.reload();
+      };
+    }
+  </script>
+</body>
+</html>
+</body>
+</html>

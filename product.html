@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Details — ShopAlpha</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+  <div class="logo">Shop<span>Alpha</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cart.html">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
+    <span id="userGreeting" style="color:#888899;font-size:0.9rem;"></span>
+    <a href="auth.html" id="authLink">Login</a>
+  </div>
+</nav>
+
+  <section class="product-detail" id="productDetail"></section>
+
+  <div class="toast" id="toast">Item added to cart!</div>
+
+  <footer><p>© 2024 ShopAlpha — CodeAlpha Internship Project</p></footer>
+
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"));
+    const product = products.find(p => p.id === id);
+    const detail = document.getElementById("productDetail");
+
+    if (product) {
+      detail.innerHTML = `
+        <div class="detail-card">
+          <div class="detail-img-wrap">
+            <img src="${product.image}" alt="${product.name}" />
+          </div>
+          <div class="detail-info">
+            <span class="badge">${product.category}</span>
+            <h1>${product.name}</h1>
+            <p class="detail-desc">${product.description}</p>
+            <div class="detail-price">$${product.price.toFixed(2)}</div>
+            <div class="qty-row">
+              <label>Quantity:</label>
+              <input type="number" id="qtyInput" value="1" min="1" max="10" />
+            </div>
+            <button class="btn" onclick="addToCartWithQty(${product.id})">Add to Cart 🛒</button>
+            <a href="index.html" class="btn btn-outline" style="margin-left:10px;">← Back</a>
+          </div>
+        </div>`;
+    } else {
+      detail.innerHTML = `<p style="padding:40px;text-align:center;">Product not found.</p>`;
+    }
+
+    function addToCartWithQty(pid) {
+      const qty = parseInt(document.getElementById("qtyInput").value);
+      const p = products.find(x => x.id === pid);
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const existing = cart.find(i => i.id === pid);
+      if (existing) { existing.qty += qty; }
+      else { cart.push({ ...p, qty }); }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      showToast();
+      updateCartCount();
+    }
+  </script>
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>renderProducts(products);</script>
+  
+  <script>
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedInUser) {
+      document.getElementById("userGreeting").textContent = "Hi, " + loggedInUser.name + "!";
+      document.getElementById("authLink").textContent = "Logout";
+      document.getElementById("authLink").href = "#";
+      document.getElementById("authLink").onclick = () => {
+        localStorage.removeItem("loggedInUser");
+        window.location.reload();
+      };
+    }
+  </script>
+</body>
+</html>
+</body>
+</html>

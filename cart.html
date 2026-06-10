@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart — ShopAlpha</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+  <div class="logo">Shop<span>Alpha</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="cart.html">🛒 Cart <span class="cart-count" id="cartCount">0</span></a>
+    <span id="userGreeting" style="color:#888899;font-size:0.9rem;"></span>
+    <a href="auth.html" id="authLink">Login</a>
+  </div>
+</nav>
+
+  <section class="cart-section">
+    <h2>Your Shopping Cart</h2>
+    <div id="cartContainer"></div>
+  </section>
+
+  <section class="order-form" id="orderFormSection" style="display:none;">
+    <h2>Complete Your Order</h2>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="custName" placeholder="John Doe" />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="custEmail" placeholder="john@email.com" />
+    </div>
+    <div class="form-group">
+      <label>Delivery Address</label>
+      <textarea id="custAddress" placeholder="123 Main St, City, Country"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Payment Method</label>
+      <select id="payMethod">
+        <option>Credit Card</option>
+        <option>UPI / Net Banking</option>
+        <option>Cash on Delivery</option>
+      </select>
+    </div>
+    <button class="btn" onclick="placeOrder()">Place Order ✅</button>
+  </section>
+
+  <div class="order-success" id="orderSuccess" style="display:none;">
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <h2>Order Placed Successfully!</h2>
+      <p id="successMsg"></p>
+      <a href="index.html" class="btn">Continue Shopping</a>
+    </div>
+  </div>
+
+  <footer><p>© 2024 ShopAlpha — CodeAlpha Internship Project</p></footer>
+
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>
+    renderCart();
+
+    function renderCart() {
+      updateCartCount();
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const container = document.getElementById("cartContainer");
+      const formSection = document.getElementById("orderFormSection");
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="empty-cart">
+            <p>🛒 Your cart is empty!</p>
+            <a href="index.html" class="btn">Start Shopping</a>
+          </div>`;
+        return;
+      }
+
+      formSection.style.display = "block";
+      let total = 0;
+      let html = `<div class="cart-list">`;
+
+      cart.forEach((item, i) => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+        html += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" />
+            <div class="cart-item-info">
+              <h3>${item.name}</h3>
+              <p>$${item.price.toFixed(2)} × ${item.qty}</p>
+            </div>
+            <div class="cart-item-actions">
+              <span class="subtotal">$${subtotal.toFixed(2)}</span>
+              <button class="remove-btn" onclick="removeItem(${i})">✕</button>
+            </div>
+          </div>`;
+      });
+
+      html += `</div>
+        <div class="cart-total">
+          <span>Total:</span>
+          <strong>$${total.toFixed(2)}</strong>
+        </div>
+        <button class="btn btn-danger" onclick="clearCart()" style="margin-bottom:20px;">Clear Cart</button>`;
+
+      container.innerHTML = html;
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function clearCart() {
+      localStorage.removeItem("cart");
+      renderCart();
+      document.getElementById("orderFormSection").style.display = "none";
+    }
+
+    function placeOrder() {
+      const name = document.getElementById("custName").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+      const address = document.getElementById("custAddress").value.trim();
+      if (!name || !email || !address) { alert("Please fill in all fields."); return; }
+      localStorage.removeItem("cart");
+      document.getElementById("cartContainer").style.display = "none";
+      document.getElementById("orderFormSection").style.display = "none";
+      document.getElementById("orderSuccess").style.display = "flex";
+      document.getElementById("successMsg").textContent =
+        `Thank you, ${name}! Your order will be delivered to: ${address}. Confirmation sent to ${email}.`;
+      updateCartCount();
+    }
+  </script>
+  <script src="products.js"></script>
+  <script src="script.js"></script>
+  <script>renderProducts(products);</script>
+  
+  <script>
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedInUser) {
+      document.getElementById("userGreeting").textContent = "Hi, " + loggedInUser.name + "!";
+      document.getElementById("authLink").textContent = "Logout";
+      document.getElementById("authLink").href = "#";
+      document.getElementById("authLink").onclick = () => {
+        localStorage.removeItem("loggedInUser");
+        window.location.reload();
+      };
+    }
+  </script>
+</body>
+</html>
+</body>
+</html>
